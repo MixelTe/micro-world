@@ -21,11 +21,19 @@ export abstract class MicroWorld_cell
 	public abstract movement: (world: MicroWorld_world) => void;
 	private color = "lightGreen";
 	private state = this.Type_state.moving;
+	private zoom = 1;
 
 	constructor(x: number, y: number)
 	{
 		this.x = x;
 		this.y = y;
+	}
+	protected applyZoom(zoom: number)
+	{
+		this.zoom = zoom;
+		this.speed *= zoom;
+		this.viewRange *= zoom;
+		this.eatRange *= zoom;
 	}
 
 	private x: number;
@@ -39,11 +47,12 @@ export abstract class MicroWorld_cell
 		ctx.save();
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
+		ctx.arc(this.x, this.y, 10 * this.zoom, 0, 2 * Math.PI);
 		ctx.fill();
 
 		if (true)
 		{
+			ctx.save();
 			ctx.strokeStyle = this.color;
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.viewRange, 0, 2 * Math.PI);
@@ -57,16 +66,17 @@ export abstract class MicroWorld_cell
 			ctx.scale(1, -1);
 			ctx.fillStyle = "black";
 			ctx.font = "30px Arial";
-			ctx.fillText(`${this.food}`, 0, - 30);
+			ctx.fillText(`${this.food}`, 0, -30 * this.zoom);
 			ctx.restore();
 			ctx.restore();
 
 			ctx.translate(this.x, this.y)
-			ctx.rotate(-this.moveAngle * Math.PI / 180);
+			ctx.rotate(this.moveAngle);
 			ctx.beginPath();
 			ctx.moveTo(0, 0);
-			ctx.lineTo(100, 0);
+			ctx.lineTo(100 * this.zoom, 0);
 			ctx.stroke();
+			ctx.restore();
 		}
 
 		ctx.restore();
@@ -88,9 +98,9 @@ export abstract class MicroWorld_cell
 
 	private moveCell(world: MicroWorld_world)
 	{
-		const angle = (this.moveAngle + 90) * Math.PI / 180;
-		this.x += this.curSpeed * Math.sin(angle);
-		this.y += this.curSpeed * Math.cos(angle);
+		const angle = this.moveAngle;
+		this.x += this.curSpeed * Math.cos(angle);
+		this.y += this.curSpeed * Math.sin(angle);
 
 		this.x = (this.x + world.width) % world.width;
 		this.y = (this.y + world.height) % world.height;
@@ -132,7 +142,7 @@ export abstract class MicroWorld_cell
 		{
 			const el = world.leaves[i];
 			const pos = el.getPosition();
-			const angle = 360 - Math.atan2(pos.y - this.y, pos.x - this.x) * 180 / Math.PI;
+			const angle = Math.atan2(pos.y - this.y, pos.x - this.x);
 			const intersection = this.pointIntersection(world, pos, this.viewRange);
 			if (intersection.intersect)
 			{
@@ -142,11 +152,11 @@ export abstract class MicroWorld_cell
 				}
 				else
 				{
-					return angle - 180;
+					return angle - Math.PI;
 				}
 			}
 		}
-		return randomInt(360);
+		return Math.random() * Math.PI * 2;
 	}
 	private pointIntersection(world: MicroWorld_world, pos: Point, r: number)
 	{

@@ -6,13 +6,20 @@ export class MicroWorld_leaves
 	private color = "green";
 	private x = 10;
 	private y = 10;
+	private mr = 2;
 	private food = randomIntFrom(2, 7);
 
-	constructor(x: number, y: number)
+	constructor(x: number, y: number, zoom = 1)
 	{
 		this.x = x;
 		this.y = y;
+		this.applyZoom(zoom);
 	}
+	private applyZoom(zoom: number)
+	{
+		this.mr *= zoom;
+	}
+
 
 	public getPosition()
 	{
@@ -24,7 +31,7 @@ export class MicroWorld_leaves
 		ctx.save();
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.food * 2, 0, 2 * Math.PI);
+		ctx.arc(this.x, this.y, this.food * this.mr, 0, 2 * Math.PI);
 		ctx.fill();
 		// ctx.fillStyle = "black";
 		// ctx.fillText(`${i}`, this.x, this.y);

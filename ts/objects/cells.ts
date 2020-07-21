@@ -8,4 +8,10 @@ export class MicroWorld_Cell_Simple extends MicroWorld_cell
 	protected foodType = this.Type_foodType.leaves;
 	protected hunger = this.Type_hunger.normal;
 	public movement = this.Type_movement.normal;
+
+	constructor(x: number, y: number, zoom = 1)
+	{
+		super(x, y);
+		this.applyZoom(zoom);
+	}
 }

@@ -9,6 +9,7 @@ export class MicroWorld
 
 	private worldColor = "darkBlue";
 	private world: MicroWorld_world;
+	private minLeaves = 5;
 
 	constructor(div: HTMLDivElement)
 	{
@@ -27,13 +28,14 @@ export class MicroWorld
 
 		this.ctx.translate(0, this.canva.height);
 		this.ctx.scale(1, -1);
-		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
+		const zoom = 1;
+		this.world = new MicroWorld_world(this.canva.width, this.canva.height, zoom);
 		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
-		for (let i = 0; i < randomIntFrom(3, 10); i++)
+		for (let i = 0; i < randomIntFrom(3 / zoom, 10 / zoom); i++)
 		{
-			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
+			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height), zoom));
 		}
-		this.world.generateLeaves();
+		this.minLeaves = this.world.generateLeaves();
 
 		this.nextFrame();
 	}
@@ -48,7 +50,7 @@ export class MicroWorld
 	private calculateAll()
 	{
 		this.world.calculateAll();
-		if (this.world.leaves.length < 5)
+		if (this.world.leaves.length < this.minLeaves / 2)
 		{
 			this.world.generateLeaves();
 		}
