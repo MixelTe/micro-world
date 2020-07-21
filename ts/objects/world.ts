@@ -40,10 +40,10 @@ export class MicroWorld_world
 
 	public generateLeaves()
 	{
-		const zoneSize = 250
-		const zoneCount = Math.round(this.width * this.height / (zoneSize * zoneSize));
-		const min = zoneCount;
-		const max = zoneCount * 2;
+		const density = 1 / (250 * 250);
+		const cellCount = Math.round(this.width * this.height * density);
+		const min = cellCount;
+		const max = cellCount * 2;
 		for (let i = 0; i < randomIntFrom(min, max); i++)
 		{
 			this.leaves.push(new MicroWorld_leaves(randomInt(this.width), randomInt(this.height)))

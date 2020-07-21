@@ -42,31 +42,32 @@ export abstract class MicroWorld_cell
 		ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
 		ctx.fill();
 
+		if (true)
+		{
+			ctx.strokeStyle = this.color;
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.viewRange, 0, 2 * Math.PI);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.eatRange, 0, 2 * Math.PI);
+			ctx.stroke();
 
+			ctx.save();
+			ctx.translate(this.x, this.y)
+			ctx.scale(1, -1);
+			ctx.fillStyle = "black";
+			ctx.font = "30px Arial";
+			ctx.fillText(`${this.food}`, 0, - 30);
+			ctx.restore();
+			ctx.restore();
 
-		ctx.strokeStyle = this.color;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.viewRange, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.eatRange, 0, 2 * Math.PI);
-		ctx.stroke();
-
-		ctx.save();
-		ctx.translate(this.x, this.y)
-		ctx.scale(1, -1);
-		ctx.fillStyle = "black";
-		ctx.font = "30px Arial";
-		ctx.fillText(`${this.food}`, 0, - 30);
-		ctx.restore();
-		ctx.restore();
-
-		ctx.translate(this.x, this.y)
-		ctx.rotate(-this.moveAngle * Math.PI / 180);
-		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(100, 0);
-		ctx.stroke();
+			ctx.translate(this.x, this.y)
+			ctx.rotate(-this.moveAngle * Math.PI / 180);
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.lineTo(100, 0);
+			ctx.stroke();
+		}
 
 		ctx.restore();
 	}
