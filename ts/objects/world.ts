@@ -40,7 +40,7 @@ export class MicroWorld_world
 
 	public generateLeaves()
 	{
-		const density = 1.5 / (200 * 200);
+		const density = 0.5 / (200 * 200);
 		const cellCount = Math.round(this.width * this.height * density);
 		const min = cellCount;
 		const max = cellCount * 2;
