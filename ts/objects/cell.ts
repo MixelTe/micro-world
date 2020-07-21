@@ -1,6 +1,5 @@
 import { MicroWorld_world } from "./World.js";
-import { randomInt, circlePointIntersect, rectPointIntersect } from "./functions.js";
-import { MicroWorld_leaves } from "./leaves.js";
+import { circlePointIntersect, rectPointIntersect } from "./functions.js";
 import { Point } from "../interfaces.js";
 
 export abstract class MicroWorld_cell
@@ -98,12 +97,38 @@ export abstract class MicroWorld_cell
 
 	private moveCell(world: MicroWorld_world)
 	{
-		const angle = this.moveAngle;
-		this.x += this.curSpeed * Math.cos(angle);
-		this.y += this.curSpeed * Math.sin(angle);
+		const dx = this.curSpeed * Math.cos(this.moveAngle);
+		const dy = this.curSpeed * Math.sin(this.moveAngle);
 
-		this.x = (this.x + world.width) % world.width;
-		this.y = (this.y + world.height) % world.height;
+		const XY = this.bounceOnEdge(dx, dy, world.width, world.height);
+		this.x = XY.newX;
+		this.y = XY.newY;
+	}
+
+	private bounceOnEdge(dx: number, dy: number, width: number, height: number)
+	{
+		let newX = this.x + dx;
+		let newY = this.y + dy;
+		if (newX > width)
+		{
+			newX = width - (newX - width);
+		}
+		if (newX < 0)
+		{
+			newX = -newX;
+		}
+		if (newY > height)
+		{
+			newY = height - (newY - height);
+		}
+		if (newY < 0)
+		{
+			newY = -newY;
+		}
+		if (newX != this.x + dx) this.moveAngle += Math.PI/2;
+		if (newY != this.y + dy) this.moveAngle = -this.moveAngle;
+
+		return { newX, newY };
 	}
 
 	private moveCellNormal(world: MicroWorld_world)
@@ -143,50 +168,21 @@ export abstract class MicroWorld_cell
 			const el = world.leaves[i];
 			const pos = el.getPosition();
 			const angle = Math.atan2(pos.y - this.y, pos.x - this.x);
-			const intersection = this.pointIntersection(world, pos, this.viewRange);
-			if (intersection.intersect)
+			if (circlePointIntersect(this.x, this.y, this.viewRange, pos.x, pos.y))
 			{
-				if (intersection.inside)
-				{
-					return angle;
-				}
-				else
-				{
-					return angle - Math.PI;
-				}
+				return angle;
 			}
 		}
 		return Math.random() * Math.PI * 2;
-	}
-	private pointIntersection(world: MicroWorld_world, pos: Point, r: number)
-	{
-		if (circlePointIntersect(this.x, this.y, r, pos.x, pos.y))
-		{
-			return {intersect: true, inside: true};
-		}
-		if (!rectPointIntersect({ x: r, y: r, width: world.width - r * 2, height: world.height - r * 2 }, { x: this.x, y: this.y }))
-		{
-			if (circlePointIntersect(this.x, this.y, r, pos.x + world.width, pos.y) ||
-				circlePointIntersect(this.x, this.y, r, pos.x - world.width, pos.y) ||
-				circlePointIntersect(this.x, this.y, r, pos.x, pos.y + world.height) ||
-				circlePointIntersect(this.x, this.y, r, pos.x, pos.y - world.height) ||
-				circlePointIntersect(this.x, this.y, r, pos.x + world.width, pos.y + world.height) ||
-				circlePointIntersect(this.x, this.y, r, pos.x + world.width, pos.y - world.height) ||
-				circlePointIntersect(this.x, this.y, r, pos.x - world.width, pos.y + world.height) ||
-				circlePointIntersect(this.x, this.y, r, pos.x - world.width, pos.y - world.height))
-			{
-				return {intersect: true, inside: false};
-			}
-		}
-		return {intersect: false, inside: false};
+		// return 20 / 180 * Math.PI;
 	}
 	private leavesIntersect(world: MicroWorld_world)
 	{
 		for (let i = 0; i < world.leaves.length; i++)
 		{
 			const el = world.leaves[i];
-			const intersection = this.pointIntersection(world, el.getPosition(), this.eatRange);
-			if (intersection.intersect) return {intersect: true, obj: el};
+			const pos = el.getPosition();
+			if (circlePointIntersect(this.x, this.y, this.eatRange, pos.x, pos.y)) return {intersect: true, obj: el};
 		}
 		return {intersect: false};;
 	}
