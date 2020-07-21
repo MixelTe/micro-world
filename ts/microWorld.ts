@@ -28,12 +28,11 @@ export class MicroWorld
 
 		this.ctx.translate(0, this.canva.height);
 		this.ctx.scale(1, -1);
-		const zoom = 1;
-		this.world = new MicroWorld_world(this.canva.width, this.canva.height, zoom);
+		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
 		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
-		for (let i = 0; i < randomIntFrom(3 / zoom, 10 / zoom); i++)
+		for (let i = 0; i < randomIntFrom(3, 10); i++)
 		{
-			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height), zoom));
+			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
 		}
 		this.minLeaves = this.world.generateLeaves();
 

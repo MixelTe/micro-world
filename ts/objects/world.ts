@@ -8,14 +8,12 @@ export class MicroWorld_world
 	public readonly cells: MicroWorld_cell[] = [];
 	public readonly width: number;
 	public readonly height: number;
-	public readonly zoom: number;
 	public readonly viscosity = 0.1;
 
-	constructor(width: number, height: number, zoom = 1)
+	constructor(width: number, height: number)
 	{
 		this.width = width;
 		this.height = height;
-		this.zoom = zoom;
 	}
 
 	public drawAll(ctx: CanvasRenderingContext2D)
@@ -43,12 +41,12 @@ export class MicroWorld_world
 	public generateLeaves()
 	{
 		const density = 1.5 / (200 * 200);
-		const cellCount = Math.round(this.width * this.height / this.zoom * density);
+		const cellCount = Math.round(this.width * this.height * density);
 		const min = cellCount;
 		const max = cellCount * 2;
 		for (let i = 0; i < randomIntFrom(min, max); i++)
 		{
-			this.leaves.push(new MicroWorld_leaves(randomInt(this.width), randomInt(this.height), this.zoom))
+			this.leaves.push(new MicroWorld_leaves(randomInt(this.width), randomInt(this.height)))
 		}
 		return min;
 		// this.objects.push(new MicroWorld_leaves(50, 50))

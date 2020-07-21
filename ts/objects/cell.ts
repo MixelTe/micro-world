@@ -20,19 +20,11 @@ export abstract class MicroWorld_cell
 	public abstract movement: (world: MicroWorld_world) => void;
 	private color = "lightGreen";
 	private state = this.Type_state.moving;
-	private zoom = 1;
 
 	constructor(x: number, y: number)
 	{
 		this.x = x;
 		this.y = y;
-	}
-	protected applyZoom(zoom: number)
-	{
-		this.zoom = zoom;
-		this.speed *= zoom;
-		this.viewRange *= zoom;
-		this.eatRange *= zoom;
 	}
 
 	private x: number;
@@ -46,7 +38,7 @@ export abstract class MicroWorld_cell
 		ctx.save();
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, 10 * this.zoom, 0, 2 * Math.PI);
+		ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
 		ctx.fill();
 
 		if (true)
@@ -65,7 +57,7 @@ export abstract class MicroWorld_cell
 			ctx.scale(1, -1);
 			ctx.fillStyle = "black";
 			ctx.font = "30px Arial";
-			ctx.fillText(`${this.food}`, 0, -30 * this.zoom);
+			ctx.fillText(`${this.food}`, 0, -30);
 			ctx.restore();
 			ctx.restore();
 
@@ -73,7 +65,7 @@ export abstract class MicroWorld_cell
 			ctx.rotate(this.moveAngle);
 			ctx.beginPath();
 			ctx.moveTo(0, 0);
-			ctx.lineTo(100 * this.zoom, 0);
+			ctx.lineTo(100, 0);
 			ctx.stroke();
 			ctx.restore();
 		}
