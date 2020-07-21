@@ -19,8 +19,9 @@ export class MicroWorld
 		const canvaBCR = this.canva.getBoundingClientRect();
 		this.canva.style.width = `${canvaBCR.width}px`;
 		this.canva.style.height = `${canvaBCR.height}px`;
-		this.canva.width = canvaBCR.width;
-		this.canva.height = canvaBCR.height;
+		const zoom = 1;
+		this.canva.width = canvaBCR.width * zoom;
+		this.canva.height = canvaBCR.height * zoom;
 
 		const ctx = this.canva.getContext("2d");
 		if (ctx == null) throw new Error("canvas context not found");
@@ -30,7 +31,7 @@ export class MicroWorld
 		this.ctx.scale(1, -1);
 		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
 		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
-		for (let i = 0; i < randomIntFrom(3, 10); i++)
+		for (let i = 0; i < randomIntFrom(3 * zoom, 10 * zoom); i++)
 		{
 			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
 		}
