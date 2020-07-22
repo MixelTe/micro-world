@@ -1,2 +1,2 @@
-# micro-world
+# Micro world
 Micro world with its life
