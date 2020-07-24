@@ -1,4 +1,3 @@
-import { MicroWorld_world } from "./objects/World.js";
 export interface Rect
 {
 	x: number,

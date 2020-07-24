@@ -1,6 +1,5 @@
 import { MicroWorld_world } from "./World.js";
-import { circlePointIntersect, rectPointIntersect } from "./functions.js";
-import { Point } from "../interfaces.js";
+import { circlePointIntersect } from "./functions.js";
 
 export abstract class MicroWorld_cell
 {
