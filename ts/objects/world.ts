@@ -34,8 +34,10 @@ export class MicroWorld_world
 	}
 	public calculateAll()
 	{
-		this.calculateOne(this.cells);
-		this.calculateOne(this.leaves);
+		for (let i = 0; i < 1; i++) {
+			this.calculateOne(this.cells);
+			this.calculateOne(this.leaves);
+		}
 	}
 	private calculateOne(elements: worldCreature[])
 	{
@@ -57,13 +59,13 @@ export class MicroWorld_world
 		const cellCount = Math.round(this.width * this.height * density);
 		const min = cellCount;
 		const max = cellCount * 2;
-		// for (let i = 0; i < randomIntFrom(min, max); i++)
-		// {
-		// 	this.leaves.push(this.createLeaves(randomInt(this.width), randomInt(this.height)));
-		// }
-		// return min;
-		this.leaves.push(new MicroWorld_leaves_Simple(500, 200))
-		return 1
+		for (let i = 0; i < randomIntFrom(min, max); i++)
+		{
+			this.leaves.push(this.createLeaves(randomInt(this.width), randomInt(this.height)));
+		}
+		return min;
+		// this.leaves.push(new MicroWorld_leaves_Simple(500, 200))
+		// return 1
 	}
 	public createLeaves(x: number, y: number)
 	{

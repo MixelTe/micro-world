@@ -33,7 +33,7 @@ export class MicroWorld
 		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
 		for (let i = 0; i < randomIntFrom(3 * zoom, 10 * zoom); i++)
 		{
-			// this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
+			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
 		}
 		this.minLeaves = this.world.generateLeaves();
 
@@ -50,10 +50,13 @@ export class MicroWorld
 	private calculateAll()
 	{
 		this.world.calculateAll();
-		// if (this.world.leaves.length < this.minLeaves / 2)
-		// {
-		// 	this.world.generateLeaves();
-		// }
+		if (this.world.cells.length == 0)
+		{
+			for (let i = 0; i < randomIntFrom(3, 10); i++)
+			{
+				this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
+			}
+		}
 	}
 
 	private drawAll()

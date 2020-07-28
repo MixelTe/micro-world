@@ -145,10 +145,9 @@ export abstract class MicroWorld_cell
 		{
 			const el = world.leaves[i];
 			const pos = el.getPosition();
-			const angle = Math.atan2(pos.y - this.y, pos.x - this.x);
 			if (circlePointIntersect(this.x, this.y, this.viewRange, pos.x, pos.y))
 			{
-				return angle;
+				return Math.atan2(pos.y - this.y, pos.x - this.x);
 			}
 		}
 		return Math.random() * Math.PI * 2;

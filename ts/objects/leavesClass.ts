@@ -1,11 +1,11 @@
-import { randomIntFrom, bounceOnEdge } from "./functions.js";
+import { randomIntFrom, bounceOnEdge, circlePointIntersect } from "./functions.js";
 import { MicroWorld_world } from "./World.js";
 
 export abstract class MicroWorld_leaves
 {
 	protected readonly Type_calculate = { normal: this.growNormal };
-	protected readonly Type_growSpeed = { normal: 60 };
-	protected readonly Type_growMax = { normal: 15 };
+	protected readonly Type_growSpeed = { normal: 70 };
+	protected readonly Type_growMax = { normal: 10 };
 	protected readonly Type_spreadRadius = { normal: 80 };
 
 	public abstract calculate: (world: MicroWorld_world) => boolean;
@@ -13,9 +13,10 @@ export abstract class MicroWorld_leaves
 	protected abstract growMax: number;
 	protected abstract spreadRadius: number;
 	private color = "green";
-	protected x: number;
-	protected y: number;
-	protected movement = {active: false, angle: 0, speed: 0, acc: 0, first: true};
+	private x: number;
+	private y: number;
+	private movement = { active: false, angle: 0, speed: 0, acc: 0, first: true };
+	private growSpeedCur = 0;
 	private food = randomIntFrom(2, 7);
 	private remove = false;
 	private growCD = 0;
@@ -24,33 +25,47 @@ export abstract class MicroWorld_leaves
 	{
 		this.x = x;
 		this.y = y;
-		this.food = food || this.food;
+		if (food != undefined) this.food = food;
 		this.movement.active = move || false;
 	}
 
 	private growNormal(world: MicroWorld_world)
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
+		let leavesAround = 1;
+		for (let i = 0; i < world.leaves.length; i++)
+		{
+			const el = world.leaves[i];
+			const pos = el.getPosition();
+			if (circlePointIntersect(this.x, this.y, this.food * 5, pos.x, pos.y))
+			{
+				leavesAround += 1;
+			}
+		}
+		this.growSpeedCur = this.growSpeed * leavesAround;
+
 		if (this.growCD == 0)
 		{
-			this.food = Math.min(this.food + 1, this.growMax);
-			this.growCD = this.growSpeed;
+			this.food = Math.min(this.food + 0.5, this.growMax);
+			this.growCD = this.growSpeedCur;
 		}
 		if (this.food == this.growMax)
 		{
 			let children = 0;
+			const minfood = 1;
+			const foodForChild = 2;
 			for (let i = 10; i >= 0; i--)
 			{
-				if (this.food / i >= 4)
+				if (this.food / i >= minfood + foodForChild)
 				{
 					children = i;
 					break;
 				}
 			}
-			const childFood = Math.floor(this.food / children);
+			const childFood = Math.floor((this.food - foodForChild * children) / children);
 			for (let i = 0; i < children - 1; i++)
 			{
-				world.Leaves_createLeaves(this.x, this.y, childFood);
+				world.Leaves_createLeaves(this.x, this.y, childFood - 1);
 			}
 			this.food = childFood;
 		}
@@ -90,11 +105,11 @@ export abstract class MicroWorld_leaves
 		ctx.fill();
 
 		// ctx.beginPath();
-		// ctx.arc(this.x, this.y, this.spreadRadius, 0, 2 * Math.PI);
+		// ctx.arc(this.x, this.y, this.food * 5, 0, 2 * Math.PI);
 		// ctx.stroke();
 		// ctx.fillStyle = "black";
 		// ctx.fillText(`${i}`, this.x, this.y);
-		// ctx.restore();
+		ctx.restore();
 	}
 
 	public getSomeFood(world: MicroWorld_world)
