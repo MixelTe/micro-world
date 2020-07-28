@@ -1,22 +1,24 @@
 import { MicroWorld_world } from "./World.js";
-import { circlePointIntersect } from "./functions.js";
+import { circlePointIntersect, bounceOnEdge } from "./functions.js";
 
 export abstract class MicroWorld_cell
 {
 	protected readonly Type_speed = { normal: 6 };
 	protected readonly Type_viewRange = { normal: 70 };
 	protected readonly Type_food = { normal: 10 };
+	protected readonly Type_foodCooldown = { normal: 30 };
 	protected readonly Type_hunger = { normal: 1 };
 	protected readonly Type_movement = { normal: this.movementNormal }
 	protected readonly Type_foodType = { leaves: 1 };
-	protected readonly Type_state = { moving: 1, eating: 2 };
+	private readonly Type_state = { dead: 0, moving: 1, eating: 2 };
 
 	protected abstract speed: number;
 	protected abstract viewRange: number;
 	protected abstract food: number;
+	protected abstract foodCooldown: number;
 	protected abstract foodType: number;
 	protected abstract hunger: number;
-	public abstract movement: (world: MicroWorld_world) => void;
+	public abstract calculate: (world: MicroWorld_world) => boolean;
 	private color = "lightGreen";
 	private state = this.Type_state.moving;
 
@@ -28,13 +30,17 @@ export abstract class MicroWorld_cell
 
 	private x: number;
 	private y: number;
+	private removeCell = false;
 	private eatRange = 20;
 	private moveAngle = 0;
 	private curSpeed = 0;
+	private foodCD = 0;
+	private cellAlpha = 1;
 
 	public draw(ctx: CanvasRenderingContext2D)
 	{
 		ctx.save();
+		ctx.globalAlpha = this.cellAlpha;
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, 10, 0, 2 * Math.PI);
@@ -74,6 +80,7 @@ export abstract class MicroWorld_cell
 
 	private movementNormal(world: MicroWorld_world)
 	{
+		this.foodCD = Math.max(this.foodCD - 1, 0);
 		switch (this.state)
 		{
 			case this.Type_state.moving:
@@ -83,7 +90,12 @@ export abstract class MicroWorld_cell
 			case this.Type_state.eating:
 				this.eatNormal(world);
 				break;
+
+			case this.Type_state.dead:
+				this.deadNormal(world);
+				break;
 		}
+		return this.removeCell;
 	}
 
 	private moveCell(world: MicroWorld_world)
@@ -91,36 +103,11 @@ export abstract class MicroWorld_cell
 		const dx = this.curSpeed * Math.cos(this.moveAngle);
 		const dy = this.curSpeed * Math.sin(this.moveAngle);
 
-		const XY = this.bounceOnEdge(dx, dy, world.width, world.height);
+		const XY = bounceOnEdge(this.moveAngle, this.x + dx, this.y + dy, world.width, world.height);
 		this.x = XY.newX;
 		this.y = XY.newY;
 	}
 
-	private bounceOnEdge(dx: number, dy: number, width: number, height: number)
-	{
-		let newX = this.x + dx;
-		let newY = this.y + dy;
-		if (newX > width)
-		{
-			newX = width - (newX - width);
-		}
-		if (newX < 0)
-		{
-			newX = -newX;
-		}
-		if (newY > height)
-		{
-			newY = height - (newY - height);
-		}
-		if (newY < 0)
-		{
-			newY = -newY;
-		}
-		if (newX != this.x + dx) this.moveAngle += Math.PI/2;
-		if (newY != this.y + dy) this.moveAngle = -this.moveAngle;
-
-		return { newX, newY };
-	}
 
 	private moveCellNormal(world: MicroWorld_world)
 	{
@@ -149,7 +136,7 @@ export abstract class MicroWorld_cell
 		}
 		else
 		{
-			this.color = "black";
+			this.state = this.Type_state.dead;
 		}
 	}
 	private turnToLeaves(world: MicroWorld_world)
@@ -173,7 +160,8 @@ export abstract class MicroWorld_cell
 		{
 			const el = world.leaves[i];
 			const pos = el.getPosition();
-			if (circlePointIntersect(this.x, this.y, this.eatRange, pos.x, pos.y)) return {intersect: true, obj: el};
+			if (circlePointIntersect(this.x, this.y, this.eatRange, pos.x, pos.y))
+				return { intersect: true, obj: el };
 		}
 		return {intersect: false};;
 	}
@@ -190,7 +178,11 @@ export abstract class MicroWorld_cell
 			const intersection = this.leavesIntersect(world);
 			if (intersection.intersect && intersection.obj != undefined)
 			{
-				this.food += intersection.obj.getSomeFood(world);
+				if (this.foodCD == 0)
+				{
+					this.food += intersection.obj.getSomeFood(world);
+					this.foodCD = this.foodCooldown;
+				}
 			}
 			else
 			{
@@ -198,5 +190,12 @@ export abstract class MicroWorld_cell
 			}
 		}
 		this.moveCell(world);
+	}
+
+	private deadNormal(world: MicroWorld_world)
+	{
+		this.color = "black";
+		this.cellAlpha = Math.max(this.cellAlpha - 0.01, 0);
+		if (this.cellAlpha == 0) this.removeCell = true;
 	}
 }

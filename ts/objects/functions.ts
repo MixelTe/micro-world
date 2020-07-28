@@ -7,7 +7,7 @@ export function randomInt(bound: number)
 
 export function randomIntFrom(start: number, bound: number)
 {
-	return Math.floor(Math.random() * bound) + start;
+	return Math.floor(Math.random() * (bound - start)) + start;
 }
 
 export function circlePointIntersect(cx: number, cy: number, cr: number, px: number, py: number)
@@ -23,4 +23,30 @@ export function rectPointIntersect(rect: Rect, point: Point)
         rect.y + rect.height > point.y &&
         point.y > rect.y
     );
+}
+
+export function bounceOnEdge(angle: number, x: number, y: number, width: number, height: number)
+{
+    let newX = x;
+    let newY = y;
+    if (newX > width)
+    {
+        newX = width - (newX - width);
+    }
+    if (newX < 0)
+    {
+        newX = -newX;
+    }
+    if (newY > height)
+    {
+        newY = height - (newY - height);
+    }
+    if (newY < 0)
+    {
+        newY = -newY;
+    }
+    if (newX != x) angle += Math.PI/2;
+    if (newY != y) angle = -angle;
+
+    return { newX, newY };
 }

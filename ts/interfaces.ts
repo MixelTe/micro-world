@@ -1,3 +1,5 @@
+import { MicroWorld_world } from "./objects/World";
+
 export interface Rect
 {
 	x: number,
@@ -17,3 +19,5 @@ export interface WorldObject
 	draw: (ctx: CanvasRenderingContext2D) => void,
 	getPosition: () => Point,
 }
+
+export type worldCreature = { calculate: (world: MicroWorld_world) => boolean };
