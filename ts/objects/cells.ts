@@ -8,7 +8,7 @@ export class MicroWorld_Cell_Simple extends MicroWorld_cell
 	protected foodCooldown = this.Type_foodCooldown.normal;
 	protected foodType = this.Type_foodType.leaves;
 	protected hunger = this.Type_hunger.normal;
-	public calculate = this.Type_movement.normal;
+	public calculate = this.Type_calculate.normal;
 
 	constructor(x: number, y: number)
 	{

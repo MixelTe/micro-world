@@ -8,8 +8,9 @@ export abstract class MicroWorld_cell
 	protected readonly Type_food = { normal: 10 };
 	protected readonly Type_foodCooldown = { normal: 30 };
 	protected readonly Type_hunger = { normal: 1 };
-	protected readonly Type_movement = { normal: this.movementNormal }
+	protected readonly Type_calculate = { normal: this.calculateNormal }
 	protected readonly Type_foodType = { leaves: 1 };
+	protected readonly Type_multiplyAge = { normal: 1000 };
 	private readonly Type_state = { dead: 0, moving: 1, eating: 2 };
 
 	protected abstract speed: number;
@@ -78,7 +79,7 @@ export abstract class MicroWorld_cell
 		ctx.restore();
 	}
 
-	private movementNormal(world: MicroWorld_world)
+	private calculateNormal(world: MicroWorld_world)
 	{
 		this.foodCD = Math.max(this.foodCD - 1, 0);
 		switch (this.state)
