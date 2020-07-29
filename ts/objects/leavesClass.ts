@@ -1,4 +1,4 @@
-import { randomIntFrom, bounceOnEdge, circlePointIntersect } from "./functions.js";
+import { randomIntFrom, bounceOnEdge, circlesIntersect } from "./functions.js";
 import { MicroWorld_world } from "./World.js";
 
 export abstract class MicroWorld_leaves
@@ -6,7 +6,7 @@ export abstract class MicroWorld_leaves
 	protected readonly Type_calculate = { normal: this.growNormal };
 	protected readonly Type_growSpeed = { normal: 70 };
 	protected readonly Type_growMax = { normal: 10 };
-	protected readonly Type_spreadRadius = { normal: 80 };
+	protected readonly Type_spreadRadius = { normal: 50 };
 
 	public abstract calculate: (world: MicroWorld_world) => boolean;
 	protected abstract growSpeed: number;
@@ -15,6 +15,7 @@ export abstract class MicroWorld_leaves
 	private color = "green";
 	private x: number;
 	private y: number;
+	private r() { return this.food * 2; }
 	private movement = { active: false, angle: 0, speed: 0, acc: 0, first: true };
 	private growSpeedCur = 0;
 	private food = randomIntFrom(2, 7);
@@ -32,17 +33,16 @@ export abstract class MicroWorld_leaves
 	private growNormal(world: MicroWorld_world)
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
-		let leavesAround = 1;
+		let leavesAround = 0;
 		for (let i = 0; i < world.leaves.length; i++)
 		{
 			const el = world.leaves[i];
-			const pos = el.getPosition();
-			if (circlePointIntersect(this.x, this.y, this.food * 5, pos.x, pos.y))
+			if (circlesIntersect({x: this.x, y: this.y, r: this.r() * 2}, el.getCircle()))
 			{
 				leavesAround += 1;
 			}
 		}
-		this.growSpeedCur = this.growSpeed * leavesAround;
+		this.growSpeedCur = this.growSpeed * (leavesAround / 2);
 
 		if (this.growCD == 0)
 		{
@@ -88,12 +88,25 @@ export abstract class MicroWorld_leaves
 		this.x = XY.newX;
 		this.y = XY.newY;
 		this.movement.speed = Math.max(this.movement.speed - this.movement.acc, 0);
-		if (this.movement.speed == 0) this.movement.active = false;
+		if (this.movement.speed == 0)
+		{
+			this.movement.active = false;
+			let leavesAround = 0;
+			for (let i = 0; i < world.leaves.length; i++)
+			{
+				const el = world.leaves[i];
+				if (circlesIntersect({x: this.x, y: this.y, r: this.r()}, el.getCircle()))
+				{
+					leavesAround += 1;
+				}
+			}
+			if (leavesAround > 1) this.remove = true;
+		}
 	}
 
-	public getPosition()
+	public getCircle()
 	{
-		return { x: this.x, y: this.y };
+		return { x: this.x, y: this.y, r: this.r() };
 	}
 
 	public draw(ctx: CanvasRenderingContext2D, i: number)
@@ -101,14 +114,24 @@ export abstract class MicroWorld_leaves
 		ctx.save();
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.food * 2, 0, 2 * Math.PI);
+		ctx.arc(this.x, this.y, this.r(), 0, 2 * Math.PI);
 		ctx.fill();
 
 		// ctx.beginPath();
-		// ctx.arc(this.x, this.y, this.food * 5, 0, 2 * Math.PI);
+		// ctx.arc(this.x, this.y, this.r() * 2, 0, 2 * Math.PI);
 		// ctx.stroke();
+
+		// ctx.strokeStyle = "gray";
+		// ctx.beginPath();
+		// ctx.arc(this.x, this.y, this.spreadRadius, 0, 2 * Math.PI);
+		// ctx.stroke();
+
 		// ctx.fillStyle = "black";
-		// ctx.fillText(`${i}`, this.x, this.y);
+		// ctx.translate(this.x, this.y);
+		// ctx.scale(1, -1);
+		// ctx.fillStyle = "black";
+		// ctx.fillText(`${i}`, 0, 0);
+
 		ctx.restore();
 	}
 

@@ -31,6 +31,7 @@ export class MicroWorld
 		this.ctx.scale(1, -1);
 		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
 		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
+		// this.world.cells.push(new MicroWorld_Cell_Simple(400, 200));
 		for (let i = 0; i < randomIntFrom(3 * zoom, 10 * zoom); i++)
 		{
 			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));

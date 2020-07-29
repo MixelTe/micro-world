@@ -64,7 +64,7 @@ export class MicroWorld_world
 			this.leaves.push(this.createLeaves(randomInt(this.width), randomInt(this.height)));
 		}
 		return min;
-		// this.leaves.push(new MicroWorld_leaves_Simple(500, 200))
+		// this.leaves.push(new MicroWorld_leaves_Simple(450, 200))
 		// return 1
 	}
 	public createLeaves(x: number, y: number)
