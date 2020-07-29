@@ -1,4 +1,4 @@
-import { Rect, Point } from "../interfaces";
+import { Rect, Point, Circle } from "../interfaces";
 
 export function randomInt(bound: number)
 {
@@ -95,11 +95,4 @@ export function bounceOnEdge(angle: number, x: number, y: number, width: number,
     if (newY != y) angle = -angle;
 
     return { newX, newY, angle };
-}
-
-interface Circle
-{
-    x: number,
-    y: number,
-    r: number,
 }

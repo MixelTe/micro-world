@@ -1,12 +1,12 @@
-import { randomInt, randomIntFrom } from "./functions.js";
+import { randomInt, randomIntFrom, circlesIntersect } from "./functions.js";
 import { MicroWorld_leaves } from "./leavesClass.js";
 import { MicroWorld_cell } from "./cell.js";
 import { MicroWorld_leaves_Simple } from "./leaves.js";
-import { worldCreature } from "../interfaces.js";
+import { worldCreature, Circle } from "../interfaces.js";
 
 export class MicroWorld_world
 {
-	public readonly leaves: MicroWorld_leaves[] = [];
+	private readonly leaves: MicroWorld_leaves[] = [];
 	public readonly cells: MicroWorld_cell[] = [];
 	public readonly width: number;
 	public readonly height: number;
@@ -74,5 +74,29 @@ export class MicroWorld_world
 	public Leaves_createLeaves(x: number, y: number, food: number)
 	{
 		this.leaves.push(new MicroWorld_leaves_Simple(x, y, food, true));
+	}
+	public getIntersectLeaves_Count(circle: Circle)
+	{
+		let leaves = 0;
+		for (let i = 0; i < this.leaves.length; i++)
+		{
+			const el = this.leaves[i];
+			if (circlesIntersect(circle, el.getCircle()))
+			{
+				leaves += 1;
+			}
+		}
+		return leaves;
+	}
+	public getIntersectLeaves_First(circle: Circle)
+	{
+		for (let i = 0; i < this.leaves.length; i++)
+		{
+			const el = this.leaves[i];
+			if (circlesIntersect(circle, el.getCircle()))
+			{
+				return el;
+			}
+		}
 	}
 }

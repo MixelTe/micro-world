@@ -1,5 +1,5 @@
 import { MicroWorld_world } from "./World.js";
-import { bounceOnEdge, circlesIntersect } from "./functions.js";
+import { bounceOnEdge } from "./functions.js";
 
 export abstract class MicroWorld_cell
 {
@@ -142,25 +142,21 @@ export abstract class MicroWorld_cell
 	}
 	private turnToLeaves(world: MicroWorld_world)
 	{
-		for (let i = 0; i < world.leaves.length; i++)
+		const leaves = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.viewRange });
+		if (leaves != undefined)
 		{
-			const el = world.leaves[i];
-			const leaves = el.getCircle();
-			if (circlesIntersect({x: this.x, y: this.y, r: this.viewRange}, leaves))
-			{
-				return Math.atan2(leaves.y - this.y, leaves.x - this.x);
-			}
+			const pos = leaves.getCircle();
+			return Math.atan2(pos.y - this.y, pos.x - this.x);
 		}
 		return Math.random() * Math.PI * 2;
 		// return 20 / 180 * Math.PI;
 	}
 	private leavesIntersect(world: MicroWorld_world)
 	{
-		for (let i = 0; i < world.leaves.length; i++)
+		const leaves = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.eatRange });
+		if (leaves != undefined)
 		{
-			const el = world.leaves[i];
-			if (circlesIntersect({x: this.x, y: this.y, r: this.eatRange}, el.getCircle()))
-				return { intersect: true, obj: el };
+			return { intersect: true, obj: leaves };
 		}
 		return {intersect: false};;
 	}

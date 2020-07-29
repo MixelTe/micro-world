@@ -1,4 +1,4 @@
-import { randomIntFrom, bounceOnEdge, circlesIntersect } from "./functions.js";
+import { randomIntFrom, bounceOnEdge } from "./functions.js";
 import { MicroWorld_world } from "./World.js";
 
 export abstract class MicroWorld_leaves
@@ -33,15 +33,7 @@ export abstract class MicroWorld_leaves
 	private growNormal(world: MicroWorld_world)
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
-		let leavesAround = 0;
-		for (let i = 0; i < world.leaves.length; i++)
-		{
-			const el = world.leaves[i];
-			if (circlesIntersect({x: this.x, y: this.y, r: this.r() * 2}, el.getCircle()))
-			{
-				leavesAround += 1;
-			}
-		}
+		let leavesAround = world.getIntersectLeaves_Count({x: this.x, y: this.y, r: this.r() * 2});
 		this.growSpeedCur = this.growSpeed * (leavesAround / 2);
 
 		if (this.growCD == 0)
@@ -92,15 +84,7 @@ export abstract class MicroWorld_leaves
 		if (this.movement.speed == 0)
 		{
 			this.movement.active = false;
-			let leavesAround = 0;
-			for (let i = 0; i < world.leaves.length; i++)
-			{
-				const el = world.leaves[i];
-				if (circlesIntersect({x: this.x, y: this.y, r: this.r()}, el.getCircle()))
-				{
-					leavesAround += 1;
-				}
-			}
+			let leavesAround = world.getIntersectLeaves_Count({ x: this.x, y: this.y, r: this.r() * 2 });
 			if (leavesAround > 1) this.remove = true;
 		}
 	}

@@ -14,4 +14,10 @@ export interface Point
 	y: number,
 }
 
+export interface Circle
+{
+    x: number,
+    y: number,
+    r: number,
+}
 export type worldCreature = { calculate: (world: MicroWorld_world) => boolean };
