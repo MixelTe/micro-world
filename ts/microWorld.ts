@@ -28,7 +28,7 @@ export class MicroWorld
 		this.ctx.translate(0, this.canva.height);
 		this.ctx.scale(1, -1);
 		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
-		this.world.generateCells();
+		// this.world.generateCells();
 		this.minLeaves = this.world.generateLeaves();
 
 		this.nextFrame();

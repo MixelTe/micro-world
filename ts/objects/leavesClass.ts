@@ -75,7 +75,6 @@ export abstract class MicroWorld_leaves
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
 		const leavesAround = world.getIntersectLeaves_Count({x: this.x, y: this.y, r: this.r() * 2});
-		// const leavesAround = 2;
 		this.growSpeedCur = this.growSpeed * (leavesAround / 2);
 		const insideBigLeaves = world.getIntersectLeaves_LargerRadius_Count(this.getCircle());
 		if (insideBigLeaves > 0) this.growCD = this.growSpeedCur;
