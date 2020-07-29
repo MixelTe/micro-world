@@ -35,7 +35,7 @@ export class MicroWorld_world
 	}
 	public calculateAll()
 	{
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < 10; i++) {
 			this.calculateOne(this.cells);
 			this.calculateOne(this.leaves);
 		}

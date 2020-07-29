@@ -4,9 +4,9 @@ import { MicroWorld_world } from "./World.js";
 export abstract class MicroWorld_leaves
 {
 	protected readonly Type_calculate = { normal: this.growNormal };
-	protected readonly Type_growSpeed = { normal: 70 };
+	protected readonly Type_growSpeed = { normal: 50 };
 	protected readonly Type_growMax = { normal: 10 };
-	protected readonly Type_spreadRadius = { normal: 50 };
+	protected readonly Type_spreadRadius = { normal: 60 };
 
 	public abstract calculate: (world: MicroWorld_world) => boolean;
 	protected abstract growSpeed: number;
@@ -34,6 +34,7 @@ export abstract class MicroWorld_leaves
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
 		const leavesAround = world.getIntersectLeaves_Count({x: this.x, y: this.y, r: this.r() * 2});
+		// const leavesAround = 2;
 		this.growSpeedCur = this.growSpeed * (leavesAround / 2);
 		const insideBigLeaves = world.getIntersectLeaves_LargerRadius_Count(this.getCircle());
 		if (insideBigLeaves > 0) this.growCD = this.growSpeedCur;
