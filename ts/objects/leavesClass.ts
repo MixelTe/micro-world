@@ -59,7 +59,7 @@ export abstract class MicroWorld_leaves
 			const childFood = Math.floor((this.food - foodForChild * children) / children);
 			for (let i = 0; i < children - 1; i++)
 			{
-				world.Leaves_createLeaves(this.x, this.y, childFood - 1);
+				world.Leaves_createLeaves(this.x, this.y, childFood);
 			}
 			this.food = childFood;
 		}
