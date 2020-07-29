@@ -42,12 +42,12 @@ export class MicroWorld_world
 	}
 	private calculateOne(elements: worldCreature[])
 	{
-		const toRemoveLeaves: worldCreature[] = [];
+		const toRemove: worldCreature[] = [];
 		elements.forEach(el =>
 		{
-			if (el.calculate(this)) toRemoveLeaves.push(el);
+			if (el.calculate(this)) toRemove.push(el);
 		});
-		toRemoveLeaves.forEach(el => {
+		toRemove.forEach(el => {
 			const index = elements.indexOf(el);
 			if (index >= 0) elements.splice(index, 1);
 			else throw new Error("element not found");

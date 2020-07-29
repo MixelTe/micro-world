@@ -52,15 +52,11 @@ export abstract class MicroWorld_cell
 	private cellSizeCur = 2;
 	private age = 0;
 
-	private onStart()
-	{
-		this.moveSpeedCur = this.moveSpeed;
-		if (this.startFood == undefined) this.foodCur = this.food;
-		else this.foodCur = this.startFood;
-		this.viewRangeCur = this.viewRange;
-		this.firstStart = false;
-	}
 
+	public getPosition()
+	{
+		return {x: this.x, y: this.y}
+	}
 	public draw(ctx: CanvasRenderingContext2D)
 	{
 		ctx.save();
@@ -121,6 +117,14 @@ export abstract class MicroWorld_cell
 		ctx.restore();
 	}
 
+	private onStart()
+	{
+		this.moveSpeedCur = this.moveSpeed;
+		if (this.startFood == undefined) this.foodCur = this.food;
+		else this.foodCur = this.startFood;
+		this.viewRangeCur = this.viewRange;
+		this.firstStart = false;
+	}
 	private calculateNormal(world: MicroWorld_world)
 	{
 		if (this.firstStart) this.onStart();

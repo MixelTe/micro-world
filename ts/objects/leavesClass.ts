@@ -30,6 +30,47 @@ export abstract class MicroWorld_leaves
 		this.movement.active = move || false;
 	}
 
+	public getPosition()
+	{
+		return {x: this.x, y: this.y}
+	}
+	public getCircle()
+	{
+		return { x: this.x, y: this.y, r: this.r() };
+	}
+	public draw(ctx: CanvasRenderingContext2D, i: number)
+	{
+		ctx.save();
+		ctx.fillStyle = this.color;
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.r(), 0, 2 * Math.PI);
+		ctx.fill();
+
+		// ctx.beginPath();
+		// ctx.arc(this.x, this.y, this.r() * 2, 0, 2 * Math.PI);
+		// ctx.stroke();
+
+		// ctx.strokeStyle = "gray";
+		// ctx.beginPath();
+		// ctx.arc(this.x, this.y, this.spreadRadius, 0, 2 * Math.PI);
+		// ctx.stroke();
+
+		// ctx.fillStyle = "black";
+		// ctx.translate(this.x, this.y);
+		// ctx.scale(1, -1);
+		// ctx.fillStyle = "black";
+		// ctx.fillText(`${i}`, 0, 0);
+
+		ctx.restore();
+	}
+	public getSomeFood(world: MicroWorld_world)
+	{
+		this.food -= 1;
+		if (this.food <= 0) this.remove = true;
+		return 1;
+	}
+
+
 	private growNormal(world: MicroWorld_world)
 	{
 		this.growCD = Math.max(this.growCD - 1, 0);
@@ -90,43 +131,5 @@ export abstract class MicroWorld_leaves
 			let leavesAround = world.getIntersectLeaves_Count({ x: this.x, y: this.y, r: this.r() * 2 });
 			if (leavesAround > 1) this.remove = true;
 		}
-	}
-
-	public getCircle()
-	{
-		return { x: this.x, y: this.y, r: this.r() };
-	}
-
-	public draw(ctx: CanvasRenderingContext2D, i: number)
-	{
-		ctx.save();
-		ctx.fillStyle = this.color;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.r(), 0, 2 * Math.PI);
-		ctx.fill();
-
-		// ctx.beginPath();
-		// ctx.arc(this.x, this.y, this.r() * 2, 0, 2 * Math.PI);
-		// ctx.stroke();
-
-		// ctx.strokeStyle = "gray";
-		// ctx.beginPath();
-		// ctx.arc(this.x, this.y, this.spreadRadius, 0, 2 * Math.PI);
-		// ctx.stroke();
-
-		// ctx.fillStyle = "black";
-		// ctx.translate(this.x, this.y);
-		// ctx.scale(1, -1);
-		// ctx.fillStyle = "black";
-		// ctx.fillText(`${i}`, 0, 0);
-
-		ctx.restore();
-	}
-
-	public getSomeFood(world: MicroWorld_world)
-	{
-		this.food -= 1;
-		if (this.food <= 0) this.remove = true;
-		return 1;
 	}
 }
