@@ -24,7 +24,6 @@ export abstract class MicroWorld_cell
 	protected abstract growTime: number;
 	public abstract calculate: (world: MicroWorld_world) => boolean;
 	private color = "lightGreen";
-	private multiplyAgeColor = "green";
 	private state = this.Type_state.moving;
 	private eatRangeMul = 1.5;
 	private cellSize = 10;
@@ -75,7 +74,7 @@ export abstract class MicroWorld_cell
 		{
 			ctx.save();
 			ctx.globalAlpha = this.cellAlpha;
-			ctx.fillStyle = this.color;
+			ctx.strokeStyle = "green";
 			ctx.lineWidth = 2;
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.cellSizeCur * 0.8, 0, 2 * Math.PI);
