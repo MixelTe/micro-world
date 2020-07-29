@@ -84,9 +84,10 @@ export abstract class MicroWorld_leaves
 		const dx = this.movement.speed * Math.cos(this.movement.angle);
 		const dy = this.movement.speed * Math.sin(this.movement.angle);
 
-		const XY = bounceOnEdge(this.movement.angle, this.x + dx, this.y + dy, world.width, world.height);
-		this.x = XY.newX;
-		this.y = XY.newY;
+		const XYA = bounceOnEdge(this.movement.angle, this.x + dx, this.y + dy, world.width, world.height);
+		this.x = XYA.newX;
+		this.y = XYA.newY;
+		this.movement.angle = XYA.angle
 		this.movement.speed = Math.max(this.movement.speed - this.movement.acc, 0);
 		if (this.movement.speed == 0)
 		{

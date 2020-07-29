@@ -94,7 +94,7 @@ export function bounceOnEdge(angle: number, x: number, y: number, width: number,
     if (newX != x) angle += Math.PI/2;
     if (newY != y) angle = -angle;
 
-    return { newX, newY };
+    return { newX, newY, angle };
 }
 
 interface Circle

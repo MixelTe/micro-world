@@ -103,9 +103,10 @@ export abstract class MicroWorld_cell
 		const dx = this.curSpeed * Math.cos(this.moveAngle);
 		const dy = this.curSpeed * Math.sin(this.moveAngle);
 
-		const XY = bounceOnEdge(this.moveAngle, this.x + dx, this.y + dy, world.width, world.height);
-		this.x = XY.newX;
-		this.y = XY.newY;
+		const XYA = bounceOnEdge(this.moveAngle, this.x + dx, this.y + dy, world.width, world.height);
+		this.x = XYA.newX;
+		this.y = XYA.newY;
+		this.moveAngle = XYA.angle;
 	}
 
 
