@@ -1,4 +1,4 @@
-import { randomIntFrom, bounceOnEdge } from "./functions.js";
+import { randomIntFrom, bounceOnEdge, randomInt } from "./functions.js";
 import { MicroWorld_world } from "./World.js";
 
 export abstract class MicroWorld_leaves
@@ -72,7 +72,7 @@ export abstract class MicroWorld_leaves
 		{
 			this.movement.angle = Math.random() * Math.PI * 2;
 			this.movement.speed = this.spreadRadius * 0.135;
-			this.movement.acc = this.spreadRadius * 0.01;
+			this.movement.acc = this.spreadRadius * 0.01 + 0.05 * (randomInt(11) - 5);
 			this.movement.first = false;
 		}
 		const dx = this.movement.speed * Math.cos(this.movement.angle);
