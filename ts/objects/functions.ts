@@ -10,9 +10,9 @@ export function randomIntFrom(start: number, bound: number)
 	return Math.floor(Math.random() * (bound - start)) + start;
 }
 
-export function circlePointIntersect(cx: number, cy: number, cr: number, px: number, py: number)
+export function circlePointIntersect(circle: Circle, point: Point)
 {
-	return cr >= Math.sqrt((cx - px) * (cx - px) + (cy - py) * (cy - py));
+	return circle.r >= Math.sqrt((circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y));
 }
 
 export function rectPointIntersect(rect: Rect, point: Point)

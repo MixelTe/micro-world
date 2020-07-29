@@ -1,4 +1,4 @@
-import { randomInt, randomIntFrom, circlesIntersect } from "./functions.js";
+import { randomInt, randomIntFrom, circlesIntersect, circlePointIntersect } from "./functions.js";
 import { MicroWorld_leaves } from "./leavesClass.js";
 import { MicroWorld_cell } from "./cell.js";
 import { MicroWorld_leaves_Simple } from "./leaves.js";
@@ -98,5 +98,19 @@ export class MicroWorld_world
 				return el;
 			}
 		}
+	}
+	public getIntersectLeaves_LargerRadius_Count(circle: Circle)
+	{
+		let leaves = 0;
+		for (let i = 0; i < this.leaves.length; i++)
+		{
+			const el = this.leaves[i];
+			const elCircle = el.getCircle();
+			if (elCircle.r > circle.r && circlePointIntersect(elCircle, circle))
+			{
+				leaves += 1;
+			}
+		}
+		return leaves;
 	}
 }
