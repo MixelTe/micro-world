@@ -3,6 +3,7 @@ import { MicroWorld_leaves } from "./leavesClass.js";
 import { MicroWorld_cell } from "./cell.js";
 import { MicroWorld_leaves_Simple } from "./leaves.js";
 import { worldCreature, Circle } from "../interfaces.js";
+import { MicroWorld_Cell_Simple } from "./cells.js";
 
 export class MicroWorld_world
 {
@@ -34,7 +35,7 @@ export class MicroWorld_world
 	}
 	public calculateAll()
 	{
-		for (let i = 0; i < 1; i++) {
+		for (let i = 0; i < 5; i++) {
 			this.calculateOne(this.cells);
 			this.calculateOne(this.leaves);
 		}
@@ -61,19 +62,19 @@ export class MicroWorld_world
 		const max = cellCount * 2;
 		for (let i = 0; i < randomIntFrom(min, max); i++)
 		{
-			this.leaves.push(this.createLeaves(randomInt(this.width), randomInt(this.height)));
+			this.leaves.push(new MicroWorld_leaves_Simple(randomInt(this.width), randomInt(this.height)));
 		}
 		return min;
 		// this.leaves.push(new MicroWorld_leaves_Simple(450, 200))
 		// return 1
 	}
-	public createLeaves(x: number, y: number)
-	{
-		return new MicroWorld_leaves_Simple(x, y)
-	}
-	public Leaves_createLeaves(x: number, y: number, food: number)
+	public createLeaves(x: number, y: number, food: number)
 	{
 		this.leaves.push(new MicroWorld_leaves_Simple(x, y, food, true));
+	}
+	public createCell_Simple(x: number, y: number, food: number)
+	{
+		this.cells.push(new MicroWorld_Cell_Simple(x, y, food));
 	}
 	public getIntersectLeaves_Count(circle: Circle)
 	{

@@ -22,7 +22,7 @@ export abstract class MicroWorld_leaves
 	private remove = false;
 	private growCD = 0;
 
-	constructor(x: number, y: number, food?: number, move?: boolean)
+	constructor(x: number, y: number, food: number | undefined, move: boolean | undefined)
 	{
 		this.x = x;
 		this.y = y;
@@ -59,7 +59,7 @@ export abstract class MicroWorld_leaves
 			const childFood = Math.floor((this.food - foodForChild * children) / children);
 			for (let i = 0; i < children - 1; i++)
 			{
-				world.Leaves_createLeaves(this.x, this.y, childFood);
+				world.createLeaves(this.x, this.y, childFood);
 			}
 			this.food = childFood;
 		}

@@ -51,13 +51,13 @@ export class MicroWorld
 	private calculateAll()
 	{
 		this.world.calculateAll();
-		if (this.world.cells.length == 0)
-		{
-			for (let i = 0; i < randomIntFrom(3, 10); i++)
-			{
-				this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
-			}
-		}
+		// if (this.world.cells.length == 0)
+		// {
+		// 	for (let i = 0; i < randomIntFrom(3, 10); i++)
+		// 	{
+		// 		this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
+		// 	}
+		// }
 	}
 
 	private drawAll()
