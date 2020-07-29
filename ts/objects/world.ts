@@ -8,7 +8,7 @@ import { MicroWorld_Cell_Simple } from "./cells.js";
 export class MicroWorld_world
 {
 	private readonly leaves: MicroWorld_leaves[] = [];
-	public readonly cells: MicroWorld_cell[] = [];
+	private readonly cells: MicroWorld_cell[] = [];
 	public readonly width: number;
 	public readonly height: number;
 	public readonly viscosity = 0.1;
@@ -67,6 +67,17 @@ export class MicroWorld_world
 		return min;
 		// this.leaves.push(new MicroWorld_leaves_Simple(450, 200))
 		// return 1
+	}
+	public generateCells()
+	{
+		const density = 0.1 / (200 * 200);
+		const cellCount = Math.round(this.width * this.height * density);
+		const min = cellCount;
+		const max = cellCount * 2;
+		for (let i = 0; i < randomIntFrom(min, max); i++)
+		{
+			this.cells.push(new MicroWorld_Cell_Simple(randomInt(this.width), randomInt(this.height)));
+		}
 	}
 	public createLeaves(x: number, y: number, food: number)
 	{

@@ -1,6 +1,4 @@
 import { MicroWorld_world } from "./objects/World.js";
-import { MicroWorld_Cell_Simple } from "./objects/cells.js";
-import { randomInt, randomIntFrom } from "./objects/functions.js";
 
 export class MicroWorld
 {
@@ -30,12 +28,7 @@ export class MicroWorld
 		this.ctx.translate(0, this.canva.height);
 		this.ctx.scale(1, -1);
 		this.world = new MicroWorld_world(this.canva.width, this.canva.height);
-		// this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
-		// this.world.cells.push(new MicroWorld_Cell_Simple(400, 200));
-		for (let i = 0; i < randomIntFrom(3 * zoom, 10 * zoom); i++)
-		{
-			this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
-		}
+		this.world.generateCells();
 		this.minLeaves = this.world.generateLeaves();
 
 		this.nextFrame();
@@ -51,13 +44,6 @@ export class MicroWorld
 	private calculateAll()
 	{
 		this.world.calculateAll();
-		// if (this.world.cells.length == 0)
-		// {
-		// 	for (let i = 0; i < randomIntFrom(3, 10); i++)
-		// 	{
-		// 		this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
-		// 	}
-		// }
 	}
 
 	private drawAll()
