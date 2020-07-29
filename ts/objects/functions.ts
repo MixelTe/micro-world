@@ -12,7 +12,7 @@ export function randomIntFrom(start: number, bound: number)
 
 export function circlePointIntersect(circle: Circle, point: Point)
 {
-	return circle.r >= Math.sqrt((circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y));
+	return circle.r * circle.r >= (circle.x - point.x) * (circle.x - point.x) + (circle.y - point.y) * (circle.y - point.y);
 }
 
 export function rectPointIntersect(rect: Rect, point: Point)
