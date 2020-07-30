@@ -15,11 +15,14 @@ export class MicroWorld
 		this.canva.style.height = "100%";
 		div.appendChild(this.canva);
 		const canvaBCR = this.canva.getBoundingClientRect();
-		this.canva.style.width = `${canvaBCR.width}px`;
-		this.canva.style.height = `${canvaBCR.height}px`;
+		const width = canvaBCR.width;
+		// const height = canvaBCR.height;
+		const height = Math.floor(canvaBCR.width / 16 * 9);
+		this.canva.style.width = `${width}px`;
+		this.canva.style.height = `${height}px`;
 		const zoom = 1;
-		this.canva.width = canvaBCR.width * zoom;
-		this.canva.height = canvaBCR.height * zoom;
+		this.canva.width = width * zoom;
+		this.canva.height = height * zoom;
 
 		const ctx = this.canva.getContext("2d");
 		if (ctx == null) throw new Error("canvas context not found");
