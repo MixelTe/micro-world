@@ -43,15 +43,14 @@ export class MicroWorld_world
 	private calculateOne(elements: worldCreature[])
 	{
 		const toRemove: worldCreature[] = [];
-		elements.forEach(el =>
-		{
+		for (const el of elements) {
 			if (el.calculate(this)) toRemove.push(el);
-		});
-		toRemove.forEach(el => {
+		}
+		for (const el of toRemove) {
 			const index = elements.indexOf(el);
 			if (index >= 0) elements.splice(index, 1);
 			else throw new Error("element not found");
-		});
+		}
 	}
 
 	public generateLeaves()
