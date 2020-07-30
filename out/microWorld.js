@@ -1,6 +1,4 @@
 import { MicroWorld_world } from "./objects/World.js";
-import { MicroWorld_Cell_Simple } from "./objects/cells.js";
-import { randomInt, randomIntFrom } from "./objects/functions.js";
 export class MicroWorld {
     constructor(div) {
         this.canva = document.createElement("canvas");
@@ -10,11 +8,14 @@ export class MicroWorld {
         this.canva.style.height = "100%";
         div.appendChild(this.canva);
         const canvaBCR = this.canva.getBoundingClientRect();
-        this.canva.style.width = `${canvaBCR.width}px`;
-        this.canva.style.height = `${canvaBCR.height}px`;
+        const width = canvaBCR.width;
+        // const height = canvaBCR.height;
+        const height = Math.floor(canvaBCR.width / 16 * 9);
+        this.canva.style.width = `${width}px`;
+        this.canva.style.height = `${height}px`;
         const zoom = 1;
-        this.canva.width = canvaBCR.width * zoom;
-        this.canva.height = canvaBCR.height * zoom;
+        this.canva.width = width * zoom;
+        this.canva.height = height * zoom;
         const ctx = this.canva.getContext("2d");
         if (ctx == null)
             throw new Error("canvas context not found");
@@ -22,10 +23,7 @@ export class MicroWorld {
         this.ctx.translate(0, this.canva.height);
         this.ctx.scale(1, -1);
         this.world = new MicroWorld_world(this.canva.width, this.canva.height);
-        // this.world.cells.push(new MicroWorld_Cell_Simple(this.canva.width / 2, this.canva.height / 2));
-        for (let i = 0; i < randomIntFrom(3 * zoom, 10 * zoom); i++) {
-            this.world.cells.push(new MicroWorld_Cell_Simple(randomInt(this.canva.width), randomInt(this.canva.height)));
-        }
+        this.world.generateCells();
         this.minLeaves = this.world.generateLeaves();
         this.nextFrame();
     }
@@ -36,9 +34,6 @@ export class MicroWorld {
     }
     calculateAll() {
         this.world.calculateAll();
-        if (this.world.leaves.length < this.minLeaves / 2) {
-            this.world.generateLeaves();
-        }
     }
     drawAll() {
         this.ctx.save();
