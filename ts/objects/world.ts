@@ -35,10 +35,12 @@ export class MicroWorld_world
 	}
 	public calculateAll()
 	{
+		const time = Date.now();
 		for (let i = 0; i < 10; i++) {
 			this.calculateOne(this.cells);
 			this.calculateOne(this.leaves);
 		}
+		console.log("time: " + (Date.now() - time) + ", leaves: " + this.leaves.length + ", speed: " + Math.floor(this.leaves.length / (Date.now() - time)));
 	}
 	private calculateOne(elements: worldCreature[])
 	{
