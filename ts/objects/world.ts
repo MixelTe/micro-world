@@ -63,17 +63,20 @@ export class MicroWorld_world
 	private calculateOne_New(elements: worldCreature[], map: Map<string, worldCreature[]>)
 	{
 		map.clear();
+		for (const el of elements) {
+			this.setToMap(map, el);
+		}
 		const toRemove: worldCreature[] = [];
-		elements.forEach(el =>
+		for (const el of elements)
 		{
 			if (el.calculate(this)) toRemove.push(el);
-			else this.setToMap(map, el);
-		});
-		toRemove.forEach(el => {
+		};
+		for (const el of toRemove)
+		{
 			const index = elements.indexOf(el);
 			if (index >= 0) elements.splice(index, 1);
 			else throw new Error("element not found");
-		});
+		};
 	}
 	private calculateOne(elements: worldCreature[])
 	{
