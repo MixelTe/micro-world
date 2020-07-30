@@ -5,13 +5,10 @@ import { MicroWorld_leaves_Simple } from "./leaves.js";
 import { worldCreature, Circle, Point } from "../interfaces.js";
 import { MicroWorld_Cell_Simple } from "./cells.js";
 
-type Leaves = { key: string | undefined, el: MicroWorld_leaves };
-type Creature = { key: string | undefined, el: worldCreature };
-
 export class MicroWorld_world
 {
-	private readonly leaves: Leaves[] = [];
-	private readonly leavesMap: Map<string, Leaves[]> = new Map();
+	private readonly leaves: MicroWorld_leaves[] = [];
+	private readonly leavesMap: Map<string, MicroWorld_leaves[]> = new Map();
 	private readonly cells: MicroWorld_cell[] = [];
 	private readonly worldGrid = 150;
 	public readonly width: number;
@@ -27,7 +24,7 @@ export class MicroWorld_world
 	public drawAll(ctx: CanvasRenderingContext2D)
 	{
 		for (let i = 0; i < this.leaves.length; i++) {
-			this.leaves[i].el.draw(ctx, i);
+			this.leaves[i].draw(ctx, i);
 		}
 		// this.leaves.forEach(el =>
 		// {
@@ -63,31 +60,19 @@ export class MicroWorld_world
 		}
 		console.log("time: " + (Date.now() - time) + ", leaves: " + this.leaves.length + ", speed: " + Math.floor(this.leaves.length / (Date.now() - time)));
 	}
-	private calculateOne_New(elements: Creature[], map: Map<string, Creature[]>)
+	private calculateOne_New(elements: worldCreature[], map: Map<string, worldCreature[]>)
 	{
-		const toRemove: Creature[] = [];
+		map.clear();
+		const toRemove: worldCreature[] = [];
 		elements.forEach(el =>
 		{
-			if (el.el.calculate(this)) toRemove.push(el);
+			if (el.calculate(this)) toRemove.push(el);
 			else this.setToMap(map, el);
 		});
 		toRemove.forEach(el => {
 			const index = elements.indexOf(el);
-			if (index < 0) throw new Error("element not found");
-			else
-			{
-				elements.splice(index, 1);
-				if (el.key != undefined)
-				{
-					const gridCell = map.get(el.key)
-					if (gridCell != undefined)
-					{
-						const index = gridCell.indexOf(el);
-						if (index < 0) throw new Error("element not found");
-						gridCell.splice(index, 1);
-					}
-				}
-			}
+			if (index >= 0) elements.splice(index, 1);
+			else throw new Error("element not found");
 		});
 	}
 	private calculateOne(elements: worldCreature[])
@@ -103,9 +88,9 @@ export class MicroWorld_world
 			else throw new Error("element not found");
 		});
 	}
-	private setToMap(map: Map<string, Creature[]>, el: Creature)
+	private setToMap(map: Map<string, worldCreature[]>, el: worldCreature)
 	{
-		const pos = el.el.getPosition();
+		const pos = el.getPosition();
 		const x = Math.floor(pos.x / this.worldGrid);
 		const y = Math.floor(pos.y / this.worldGrid);
 		const key = `${x}_${y}`
@@ -115,18 +100,13 @@ export class MicroWorld_world
 			gridCell = [];
 			map.set(key, gridCell);
 		}
-		const index = gridCell.indexOf(el);
-		if (index < 0)
-		{
-			el.key = key;
-			gridCell.push(el);
-		}
+		gridCell.push(el);
 	}
-	private getFromMap(map: Map<string, Creature[]>, pos: Point)
+	private getFromMap(map: Map<string, worldCreature[]>, pos: Point)
 	{
 		const X = Math.floor(pos.x / this.worldGrid);
 		const Y = Math.floor(pos.y / this.worldGrid);
-		const gridZone: Creature[][] = [];
+		const gridZone: worldCreature[][] = [];
 		for (let y = -1; y <= 1; y++) {
 			for (let x = -1; x <= 1; x++)
 			{
@@ -135,7 +115,7 @@ export class MicroWorld_world
 		}
 		return gridZone;
 	}
-	private getGridCell(map: Map<string, Creature[]>, x: number, y: number)
+	private getGridCell(map: Map<string, worldCreature[]>, x: number, y: number)
 	{
 		const key = `${x}_${y}`
 		let gridCell = map.get(key);
@@ -151,7 +131,7 @@ export class MicroWorld_world
 		const max = cellCount * 2;
 		for (let i = 0; i < randomIntFrom(min, max); i++)
 		{
-			this.leaves.push({key: undefined, el: new MicroWorld_leaves_Simple(randomInt(this.width), randomInt(this.height))});
+			this.leaves.push(new MicroWorld_leaves_Simple(randomInt(this.width), randomInt(this.height)));
 		}
 		return min;
 		// this.leaves.push(new MicroWorld_leaves_Simple(450, 200))
@@ -170,7 +150,7 @@ export class MicroWorld_world
 	}
 	public createLeaves(x: number, y: number, food: number)
 	{
-		this.leaves.push({ key: undefined, el: new MicroWorld_leaves_Simple(x, y, food, true) });
+		this.leaves.push(new MicroWorld_leaves_Simple(x, y, food, true));
 	}
 	public createCell_Simple(x: number, y: number, food: number)
 	{
@@ -179,13 +159,13 @@ export class MicroWorld_world
 	public getIntersectLeaves_Count(circle: Circle)
 	{
 		let leavesCount = 0;
-		const gridCells = <Leaves[][]>this.getFromMap(this.leavesMap, circle);
+		const gridCells = <MicroWorld_leaves[][]>this.getFromMap(this.leavesMap, circle);
 		for (let i = 0; i < gridCells.length; i++) {
 			const el = gridCells[i];
 			for (let o = 0; o < el.length; o++)
 			{
 				const leaves = el[o];
-				if (circlesIntersect(circle, leaves.el.getCircle()))
+				if (circlesIntersect(circle, leaves.getCircle()))
 				{
 					leavesCount += 1;
 				}
@@ -195,15 +175,15 @@ export class MicroWorld_world
 	}
 	public getIntersectLeaves_First(circle: Circle)
 	{
-		const gridCells = <Leaves[][]>this.getFromMap(this.leavesMap, circle);
+		const gridCells = <MicroWorld_leaves[][]>this.getFromMap(this.leavesMap, circle);
 		for (let i = 0; i < gridCells.length; i++) {
 			const el = gridCells[i];
 			for (let o = 0; o < el.length; o++)
 			{
 				const leaves = el[o];
-				if (circlesIntersect(circle, leaves.el.getCircle()))
+				if (circlesIntersect(circle, leaves.getCircle()))
 				{
-					return leaves.el;
+					return leaves;
 				}
 			}
 		}
@@ -212,13 +192,13 @@ export class MicroWorld_world
 	{
 
 		let leavesCount = 0;
-		const gridCells = <Leaves[][]>this.getFromMap(this.leavesMap, circle);
+		const gridCells = <MicroWorld_leaves[][]>this.getFromMap(this.leavesMap, circle);
 		for (let i = 0; i < gridCells.length; i++) {
 			const el = gridCells[i];
 			for (let o = 0; o < el.length; o++)
 			{
 				const leaves = el[o];
-				const leavesCircle = leaves.el.getCircle();
+				const leavesCircle = leaves.getCircle();
 				if (leavesCircle.r > circle.r && circlePointIntersect(leavesCircle, circle))
 				{
 					leavesCount += 1;
