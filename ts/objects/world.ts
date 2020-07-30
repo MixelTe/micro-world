@@ -34,7 +34,7 @@ export class MicroWorld_world
 		{
 			el.draw(ctx);
 		});
-		this.drawWorldGrid(ctx);
+		// this.drawWorldGrid(ctx);
 	}
 	private drawWorldGrid(ctx: CanvasRenderingContext2D)
 	{
@@ -54,7 +54,7 @@ export class MicroWorld_world
 	public calculateAll()
 	{
 		const time = Date.now();
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 1; i++) {
 			this.calculateOne(this.cells);
 			this.calculateOne_New(this.leaves, this.leavesMap);
 		}

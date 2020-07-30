@@ -17,25 +17,25 @@ export function circlePointIntersect(circle: Circle, point: Point)
 
 export function rectPointIntersect(rect: Rect, point: Point)
 {
-    return (
-        rect.x + rect.width > point.x &&
-        point.x > rect.x &&
-        rect.y + rect.height > point.y &&
-        point.y > rect.y
-    );
+	return (
+		rect.x + rect.width > point.x &&
+		point.x > rect.x &&
+		rect.y + rect.height > point.y &&
+		point.y > rect.y
+	);
 }
 
 export function circlesIntersect(circle1: Circle, circle2: Circle)
 {
-    let maxDistanceSquared = circle1.r + circle2.r;
-    maxDistanceSquared *= maxDistanceSquared;
+	let maxDistanceSquared = circle1.r + circle2.r;
+	maxDistanceSquared *= maxDistanceSquared;
 
-    const dx = circle1.x - circle2.x;
-    const dy = circle1.y - circle2.y;
+	const dx = circle1.x - circle2.x;
+	const dy = circle1.y - circle2.y;
 
-    const currentDistanceSquared = dx * dx + dy * dy;
+	const currentDistanceSquared = dx * dx + dy * dy;
 
-    return currentDistanceSquared < maxDistanceSquared;
+	return currentDistanceSquared < maxDistanceSquared;
 }
 
 // function intersectionPoints(c1: Circle, c2: Circle)
@@ -73,26 +73,26 @@ export function circlesIntersect(circle1: Circle, circle2: Circle)
 
 export function bounceOnEdge(angle: number, x: number, y: number, width: number, height: number)
 {
-    let newX = x;
-    let newY = y;
-    if (newX > width)
-    {
-        newX = width - (newX - width);
-    }
-    if (newX < 0)
-    {
-        newX = -newX;
-    }
-    if (newY > height)
-    {
-        newY = height - (newY - height);
-    }
-    if (newY < 0)
-    {
-        newY = -newY;
-    }
-    if (newX != x) angle += Math.PI/2;
-    if (newY != y) angle = -angle;
+	let newX = x;
+	let newY = y;
+	if (newX > width)
+	{
+		newX = width - (newX - width);
+	}
+	if (newX < 0)
+	{
+		newX = -newX;
+	}
+	if (newY > height)
+	{
+		newY = height - (newY - height);
+	}
+	if (newY < 0)
+	{
+		newY = -newY;
+	}
+	if (newX != x) angle += Math.PI / 2;
+	if (newY != y) angle = -angle;
 
-    return { newX, newY, angle };
+	return { newX, newY, angle };
 }
