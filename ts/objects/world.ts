@@ -14,6 +14,7 @@ export class MicroWorld_world
 	public readonly width: number;
 	public readonly height: number;
 	public readonly viscosity = 0.1;
+	private worldAge = 0;
 
 	constructor(width: number, height: number)
 	{
@@ -35,6 +36,14 @@ export class MicroWorld_world
 			el.draw(ctx);
 		});
 		// this.drawWorldGrid(ctx);
+
+		ctx.save();
+		ctx.translate(0, this.height)
+		ctx.scale(1, -1);
+		ctx.fillStyle = "red";
+		ctx.font = "30px Arial";
+		ctx.fillText(`${Math.floor(this.worldAge / 10)}`, 10, 30);
+		ctx.restore();
 	}
 	private drawWorldGrid(ctx: CanvasRenderingContext2D)
 	{
@@ -57,6 +66,8 @@ export class MicroWorld_world
 		for (let i = 0; i < 1; i++) {
 			this.calculateOne(this.cells);
 			this.calculateOne_New(this.leaves, this.leavesMap);
+			if (this.leaves.length != 0 || this.cells.length != 0)
+				this.worldAge += 1;
 		}
 		console.log("time: " + (Date.now() - time) + ", leaves: " + this.leaves.length + ", speed: " + Math.floor(this.leaves.length / (Date.now() - time)));
 	}
@@ -127,7 +138,7 @@ export class MicroWorld_world
 
 	public generateLeaves()
 	{
-		const density = 0.5 / (this.worldGrid * this.worldGrid);
+		const density = 0.2 / (this.worldGrid * this.worldGrid);
 		const cellCount = Math.round(this.width * this.height * density);
 		const min = cellCount;
 		const max = cellCount * 2;
@@ -158,6 +169,7 @@ export class MicroWorld_world
 	{
 		this.cells.push(new MicroWorld_Cell_Simple(x, y, food));
 	}
+
 	public getIntersectLeaves_Count(circle: Circle)
 	{
 		let leavesCount = 0;
@@ -189,6 +201,23 @@ export class MicroWorld_world
 				}
 			}
 		}
+	}
+	public getIntersectLeaves_Random(circle: Circle)
+	{
+		const gridCells = <MicroWorld_leaves[][]>this.getFromMap(this.leavesMap, circle);
+		const rightLeaves = [];
+		for (let i = 0; i < gridCells.length; i++) {
+			const el = gridCells[i];
+			for (let o = 0; o < el.length; o++)
+			{
+				const leaves = el[o];
+				if (circlesIntersect(circle, leaves.getCircle()))
+				{
+					rightLeaves.push(leaves);
+				}
+			}
+		}
+		return rightLeaves[randomInt(rightLeaves.length)];
 	}
 	public getIntersectLeaves_LargerRadius_Count(circle: Circle)
 	{

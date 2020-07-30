@@ -193,7 +193,7 @@ export abstract class MicroWorld_cell
 	}
 	private turnToLeaves(world: MicroWorld_world)
 	{
-		const leaves = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.viewRangeCur });
+		const leaves = world.getIntersectLeaves_Random({ x: this.x, y: this.y, r: this.viewRangeCur });
 		if (leaves != undefined)
 		{
 			const pos = leaves.getCircle();
@@ -263,7 +263,7 @@ export abstract class MicroWorld_cell
 		if (this.age >= this.multiplyAge)
 		{
 			let children = 0;
-			const foodForChild = 0;
+			const foodForChild = this.food * 1.5;
 			for (let i = 10; i >= 0; i--)
 			{
 				if (this.foodCur / i >= this.food + foodForChild)
