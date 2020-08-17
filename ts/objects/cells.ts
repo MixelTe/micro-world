@@ -20,6 +20,30 @@ export class MicroWorld_Cell_Simple extends MicroWorld_cell
 
 	createChild(x: number, y: number, food: number, world: MicroWorld_world)
 	{
-		world.createCell_Simple(x, y, food);
+		world.addCell(new MicroWorld_Cell_Simple(x, y, food));
+		// world.createCell_Simple(x, y, food);
+	}
+}
+
+export class MicroWorld_Cell_CellEating extends MicroWorld_cell
+{
+	protected moveSpeed = this.Type_speed.fast;
+	protected viewRange = this.Type_viewRange.increased;
+	protected food = this.Type_food.normal;
+	protected foodCooldown = this.Type_foodCooldown.fast;
+	protected foodType = this.Type_foodType.cells;
+	protected hunger = this.Type_hunger.normal;
+	protected multiplyAge = this.Type_multiplyAge.normal;
+	protected growTime = this.Type_growTime.decreased;
+	public calculate = this.Type_calculate.normal;
+
+	constructor(x: number, y: number, food?: number)
+	{
+		super(x, y, food);
+	}
+
+	createChild(x: number, y: number, food: number, world: MicroWorld_world)
+	{
+		world.addCell(new MicroWorld_Cell_CellEating(x, y, food));
 	}
 }

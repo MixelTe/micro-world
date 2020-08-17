@@ -1,17 +1,18 @@
 import { MicroWorld_world } from "./World.js";
 import { bounceOnEdge } from "./functions.js";
+import { WorldCreature } from "../interfaces.js";
 
 export abstract class MicroWorld_cell
 {
-	protected readonly Type_speed = { normal: 6 };
-	protected readonly Type_viewRange = { normal: 70 };
+	protected readonly Type_speed = { normal: 6, fast: 9 };
+	protected readonly Type_viewRange = { normal: 70, increased: 120 };
 	protected readonly Type_food = { normal: 10 };
-	protected readonly Type_foodCooldown = { normal: 30 };
+	protected readonly Type_foodCooldown = { normal: 30, fast: 20 };
 	protected readonly Type_hunger = { normal: 1 };
 	protected readonly Type_calculate = { normal: this.calculateNormal }
-	protected readonly Type_foodType = { leaves: 1 };
+	protected readonly Type_foodType = { leaves: 1, cells: 2 };
 	protected readonly Type_multiplyAge = { normal: 1000 };
-	protected readonly Type_growTime = { normal: 500 };
+	protected readonly Type_growTime = { normal: 500, decreased: 350 };
 	private readonly Type_state = { dead: 0, moving: 1, eating: 2 };
 
 	protected abstract moveSpeed: number;
@@ -56,6 +57,16 @@ export abstract class MicroWorld_cell
 	public getPosition()
 	{
 		return {x: this.x, y: this.y}
+	}
+	public getCircle()
+	{
+		return { x: this.x, y: this.y, r: this.cellSizeCur };
+	}
+	public getSomeFood(world: MicroWorld_world)
+	{
+		this.food -= 1;
+		if (this.food <= 0) this.state = this.Type_state.dead;
+		return 1;
 	}
 	public draw(ctx: CanvasRenderingContext2D)
 	{
@@ -123,6 +134,14 @@ export abstract class MicroWorld_cell
 		if (this.startFood == undefined) this.foodCur = this.food;
 		else this.foodCur = this.startFood;
 		this.viewRangeCur = this.viewRange;
+
+		switch (this.foodType) {
+			case this.Type_foodType.leaves: this.color = "lightGreen"; break;
+			case this.Type_foodType.cells: this.color = "tomato"; break;
+
+			default: console.error("switch default"); break;
+		}
+
 		this.firstStart = false;
 	}
 	private calculateNormal(world: MicroWorld_world)
@@ -133,8 +152,8 @@ export abstract class MicroWorld_cell
 		{
 			case this.Type_state.moving:
 				this.ageNormal(world);
-				this.moveCellNormal(world);
 				this.multiplyNormal(world);
+				this.moveCellNormal(world);
 				break;
 
 			case this.Type_state.eating:
@@ -163,13 +182,17 @@ export abstract class MicroWorld_cell
 
 	private moveCellNormal(world: MicroWorld_world)
 	{
+		if (this.foodType == this.Type_foodType.cells)
+		{
+			const a = 1;
+		}
 		if (this.foodCur >= 0)
 		{
 			if (this.speedCur <= 0)
 			{
 				if (this.foodCur > 0)
 				{
-					this.moveAngle = this.turnToLeaves(world);
+					this.moveAngle = this.turnToFood(world);
 					this.speedCur = this.moveSpeedCur;
 				}
 				this.foodCur -= this.hunger;
@@ -181,7 +204,7 @@ export abstract class MicroWorld_cell
 
 			this.moveCell(world);
 
-			if (this.leavesIntersect(world).intersect)
+			if (this.foodIntersect(world).intersect)
 			{
 				this.state = this.Type_state.eating;
 			}
@@ -191,23 +214,38 @@ export abstract class MicroWorld_cell
 			this.state = this.Type_state.dead;
 		}
 	}
-	private turnToLeaves(world: MicroWorld_world)
+	private turnToFood(world: MicroWorld_world)
 	{
-		const leaves = world.getIntersectLeaves_Random({ x: this.x, y: this.y, r: this.viewRangeCur });
-		if (leaves != undefined)
+		let food: WorldCreature | undefined = undefined;
+		switch (this.foodType) {
+			case this.Type_foodType.leaves: food = world.getIntersectLeaves_Random({ x: this.x, y: this.y, r: this.viewRangeCur }); break;
+			case this.Type_foodType.cells: food = world.getIntersectCell_Random({ x: this.x, y: this.y, r: this.viewRangeCur },
+				(cell: MicroWorld_cell) => { return cell.foodType == this.Type_foodType.leaves }); break;
+
+			default: console.error("switch default"); break;
+		}
+		// const leaves = world.getIntersectLeaves_Random({ x: this.x, y: this.y, r: this.viewRangeCur });
+		if (food != undefined)
 		{
-			const pos = leaves.getCircle();
+			const pos = food.getCircle();
 			return Math.atan2(pos.y - this.y, pos.x - this.x);
 		}
 		return Math.random() * Math.PI * 2;
 		// return 20 / 180 * Math.PI;
 	}
-	private leavesIntersect(world: MicroWorld_world)
+	private foodIntersect(world: MicroWorld_world)
 	{
-		const leaves = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.eatRangeCur() });
-		if (leaves != undefined)
+		let food: WorldCreature | undefined = undefined;
+		switch (this.foodType) {
+			case this.Type_foodType.leaves: food = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.eatRangeCur() }); break;
+			case this.Type_foodType.cells: food = world.getIntersectCell_First({ x: this.x, y: this.y, r: this.eatRangeCur() },
+				(cell: MicroWorld_cell) => { return cell.foodType == this.Type_foodType.leaves }); break;
+			default: console.error("switch default"); break;
+		}
+		// const leaves = world.getIntersectLeaves_First({ x: this.x, y: this.y, r: this.eatRangeCur() });
+		if (food != undefined)
 		{
-			return { intersect: true, obj: leaves };
+			return { intersect: true, obj: food };
 		}
 		return {intersect: false};;
 	}
@@ -216,12 +254,14 @@ export abstract class MicroWorld_cell
 	{
 		if (this.speedCur > 0)
 		{
-			this.speedCur = Math.max(this.speedCur - this.eatRangeCur() / 10, 0);
+			// this.speedCur = Math.max(this.speedCur - this.eatRangeCur() / 10, 0);
+			this.speedCur /= 2;
+			if (this.speedCur < 1) this.speedCur = 0;
 		}
 		else
 		{
 			this.speedCur = 0;
-			const intersection = this.leavesIntersect(world);
+			const intersection = this.foodIntersect(world);
 			if (intersection.intersect && intersection.obj != undefined)
 			{
 				if (this.foodCD == 0)

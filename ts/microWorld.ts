@@ -16,8 +16,8 @@ export class MicroWorld
 		div.appendChild(this.canva);
 		const canvaBCR = this.canva.getBoundingClientRect();
 		const width = canvaBCR.width;
-		// const height = canvaBCR.height;
-		const height = Math.floor(canvaBCR.width / 16 * 9);
+		const height = canvaBCR.height;
+		// const height = Math.floor(canvaBCR.width / 16 * 9);
 		this.canva.style.width = `${width}px`;
 		this.canva.style.height = `${height}px`;
 		const zoom = 1;
@@ -39,14 +39,23 @@ export class MicroWorld
 
 	private nextFrame(this: MicroWorld)
 	{
-		this.calculateAll();
+		if (this.world.CellsCount > 0)
+		{
+			this.calculateAll();
+		}
 		this.drawAll();
 		requestAnimationFrame(this.nextFrame.bind(this));
 	}
 
+	private cell2Created = false;
 	private calculateAll()
 	{
 		this.world.calculateAll();
+		if (!this.cell2Created && this.world.WorldAge > 400)
+		{
+			this.world.generateCells2();
+			this.cell2Created = true;
+		}
 	}
 
 	private drawAll()

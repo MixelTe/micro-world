@@ -20,8 +20,10 @@ export interface Circle
     y: number,
     r: number,
 }
-export interface worldCreature
+export interface WorldCreature
 {
 	calculate: (world: MicroWorld_world) => boolean,
 	getPosition: () => Point,
+	getCircle: () => Circle,
+	getSomeFood: (world: MicroWorld_world) => number
 };
